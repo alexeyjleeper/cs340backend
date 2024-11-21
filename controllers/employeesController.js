@@ -89,41 +89,41 @@ const updateEmployee = async (req, res) => {
 
 //delete
 // Endpoint to delete a customer from the database
-const deletePerson = async (req, res) => {
-    console.log("Deleting person with id:", req.params.id);
-    const personID = req.params.id;
+const deleteEmployee = async (req, res) => {
+    console.log("Deleting employee with id:", req.params.id);
+    const employeeId = req.params.id;
   
     try {
-        // Ensure the person exitst
+        // Ensure the employee exitst
         const [isExisting] = await db.query(
             "SELECT 1 FROM Employees WHERE id = ?",
-            [personID]
+            [employeeID]
         );
     
-        // If the person doesn't exist, return an error
+        // If the employee doesn't exist, return an error
         if (isExisting.length === 0) {
             return res.status(404).send("Employee not found");
         }
     
-        // Delete related records from the intersection table (see FK contraints bsg_cert_people)
+        // Delete related records from the intersection table (see FK contraints Employees)
         const [response] = await db.query(
-            "DELETE FROM bsg_cert_people WHERE pid = ?",
-            [personID]
+            "DELETE FROM Employees WHERE pid = ?",
+            [employeeID]
         );
     
         console.log(
             "Deleted",
             response.affectedRows,
-            "rows from bsg_cert_people intersection table"
+            "rows from Employees intersection table"
         );
     
-        // Delete the person from bsg_people
-        await db.query("DELETE FROM bsg_people WHERE id = ?", [personID]);
+        // Delete the employee from Employees
+        await db.query("DELETE FROM Employees WHERE id = ?", [employeeID]);
     
         // Return the appropriate status code
-        res.status(204).json({ message: "Person deleted successfully" })
+        res.status(204).json({ message: "Employee deleted successfully" })
         } catch (error) {
-            console.error("Error deleting person from the database:", error);
+            console.error("Error deleting employee from the database:", error);
             res.status(500).json({ error: error.message });
     }
 };
@@ -131,4 +131,8 @@ const deletePerson = async (req, res) => {
 module.exports = {
     getname,
     postname,
+    getEmployees,
+    createEmployee,
+    updateEmployee,
+    deleteEmployee,
 };
