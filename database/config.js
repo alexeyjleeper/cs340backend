@@ -1,4 +1,4 @@
-import mysql from 'mysql';
+const mysql = require('mysql');
 
 /* Citation for the following var
  * Date: 10/3/2024
@@ -10,8 +10,10 @@ var pool = mysql.createPool({
     connectionLimit : 10,
     host            : 'classmysql.engr.oregonstate.edu',
     user            : 'cs340_leeperal',
-    password        : 'Ly8scrL1wvlK',
+    password        : '',
     database        : 'cs340_leeperal'
 })
 
-export default pool;
+module.exports = {
+    pool
+};

@@ -35,7 +35,7 @@ const createEmployee = async (req, res) => {
         // get all user inputs into variables
         const {name, age} = req.body;
 
-        const query = `INSERT INTO Employees (name, age) VALUES (?, ?)`;
+        const query = "INSERT INTO Employees (name, age) VALUES (?, ?)";
         
         response = db.query(query, [name, age]);
         
@@ -59,14 +59,14 @@ const updateEmployee = async (req, res) => {
 
     try {
 
-    const [data] = await db.query("SELECT * FROM bsg_people WHERE id = ?", [employeeId]);
+    const [data] = await db.query("SELECT * FROM Employees WHERE employee_id = ?", [employeeId]);
 
     const oldEmployee = data[0];
 
     // If any attributes are not equal, perform update
     if (!lodash.isEqual(newEmployee, oldEmployee)) {
       const query =
-        "UPDATE bsg_people SET name=?, age=? WHERE id=?";
+        "UPDATE Employees SET name=?, age=? WHERE employee_id=?";
 
       const values = [
         newEmployee.name,
@@ -83,52 +83,44 @@ const updateEmployee = async (req, res) => {
     res.json({ message: "Person details are the same, no update" });
     } catch (error) {
         console.log("Error updating person", error);
-        res.status(500).json({ error: `Error updating the person with id ${employeeId}` });
+        res.status(500).json({ error: `Error updating the employee with id ${employeeId}` });
     }
 };
 
 //delete
-// Endpoint to delete a customer from the database
-const deletePerson = async (req, res) => {
-    console.log("Deleting person with id:", req.params.id);
-    const personID = req.params.id;
+// Endpoint to delete an employee from the database
+const deleteEmployee = async (req, res) => {
+    console.log("Deleting employee with id:", req.params.id);
+    const employeeId = req.params.id;
   
     try {
         // Ensure the person exitst
         const [isExisting] = await db.query(
-            "SELECT 1 FROM Employees WHERE id = ?",
-            [personID]
+            "SELECT 1 FROM Employees WHERE employee_id = ?",
+            [employeeId]
         );
     
-        // If the person doesn't exist, return an error
+        // If the employee doesn't exist, return an error
         if (isExisting.length === 0) {
             return res.status(404).send("Employee not found");
         }
     
-        // Delete related records from the intersection table (see FK contraints bsg_cert_people)
-        const [response] = await db.query(
-            "DELETE FROM bsg_cert_people WHERE pid = ?",
-            [personID]
-        );
+        // ON DELETE CASCADE should handle FK relationships
     
-        console.log(
-            "Deleted",
-            response.affectedRows,
-            "rows from bsg_cert_people intersection table"
-        );
-    
-        // Delete the person from bsg_people
-        await db.query("DELETE FROM bsg_people WHERE id = ?", [personID]);
+        // Delete the employee from Employees
+        await db.query("DELETE FROM Employees WHERE employee_id = ?", [employeeId]);
     
         // Return the appropriate status code
-        res.status(204).json({ message: "Person deleted successfully" })
+        res.status(204).json({ message: "Employee deleted successfully" })
         } catch (error) {
-            console.error("Error deleting person from the database:", error);
+            console.error("Error deleting employee from the database:", error);
             res.status(500).json({ error: error.message });
     }
 };
 
 module.exports = {
-    getname,
-    postname,
+    getEmployees,
+    createEmployee,
+    updateEmployee,
+    deleteEmployee
 };
