@@ -94,7 +94,7 @@ const deleteEmployee = async (req, res) => {
     const employeeId = req.params.id;
   
     try {
-        // Ensure the person exitst
+        // Ensure the employee exitst
         const [isExisting] = await db.query(
             "SELECT 1 FROM Employees WHERE employee_id = ?",
             [employeeId]
