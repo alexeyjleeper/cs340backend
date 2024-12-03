@@ -12,7 +12,8 @@ CREATE TABLE Employees (
     employee_id int AUTO_INCREMENT NOT NULL,
     name varchar(255) NOT NULL,
     age int NOT NULL,
-    PRIMARY KEY (employee_id)
+    PRIMARY KEY (employee_id),
+    CONSTRAINT FOREIGN KEY (employee_id) REFERENCES Events_has_Employees(Employees_employee_id)
 );
 
 CREATE TABLE Events (
@@ -30,12 +31,13 @@ CREATE TABLE Vendors (
     vendor_id int AUTO_INCREMENT NOT NULL,	
     vendor_name VARCHAR(255) NOT NULL,		
 	description VARCHAR(255) NOT NULL,
-    PRIMARY KEY(vendor_id)
+    PRIMARY KEY(vendor_id),
+    CONSTRAINT FOREIGN KEY (vendor_id) REFERENCES Events_has_Vendors(Vendors_vendor_id)
 );
 
 CREATE TABLE GolfCarts (
     golf_cart_id int AUTO_INCREMENT NOT NULL,
-    last_serviced datetime NOT NULL,
+    last_serviced date NOT NULL,
     employee_id int,
     PRIMARY KEY(golf_cart_id),
     CONSTRAINT FOREIGN KEY(employee_id) REFERENCES Employees(employee_id) ON DELETE CASCADE
@@ -98,15 +100,16 @@ VALUES
 );
 
 INSERT INTO Events (event_name, vendor_id, time_start)
-VALUES ("Birthday Party", 
-    (SELECT vendor_id FROM Vendors WHERE vendor_id = 1), 
-    "2024-11-01 13:00:00"),
-    ("Family Gathering",
-    (SELECT vendor_id FROM Vendors WHERE vendor_id = 2), 
-    "2024-11-01 14:00:00"),
-    ("BBQ",
-    (SELECT vendor_id FROM Vendors WHERE vendor_id = 4),
-    "2024-11-01");
+VALUES 
+    ("Birthday Party", 
+        (SELECT vendor_id FROM Vendors WHERE vendor_id = 1), 
+        "2024-11-01 13:00:00"),
+    ("Family Gathering", 
+        (SELECT vendor_id FROM Vendors WHERE vendor_id = 2), 
+        "2024-11-01 14:00:00"),
+    ("BBQ", 
+        (SELECT vendor_id FROM Vendors WHERE vendor_id = 4),
+        "2024-11-01 00:00:00");
 
 -- insert sample data into golfcarts
 INSERT INTO GolfCarts 
@@ -116,15 +119,15 @@ INSERT INTO GolfCarts
 )
 VALUES
 (
-    '09-09-2024', 
+    '2024-09-09', 
     (SELECT employee_id FROM Employees WHERE employee_id = 1)
 ),
 (
-    '05-12-2023', 
+    '2023-12-05', 
     (SELECT employee_id FROM Employees WHERE employee_id = 2)
 ),
 (
-    '06-26-2024', 
+    '2024-06-26', 
     (SELECT employee_id FROM Employees WHERE employee_id = 3)
 );
 

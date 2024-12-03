@@ -125,6 +125,206 @@ app.get('/api/getEmployeesTable', async (req, res) => {
   }
 })
 
+// READ endpoint for golf carts page
+app.get('/api/getGolfCartsTable', async (req, res) => {
+  let connection;
+
+  try {
+    //establish connection
+    connection = await db.pool.getConnection();
+    console.log('Connection established.');
+
+    try {
+      const results = await connection.query('SELECT * FROM GolfCarts;');
+
+      //workable format
+      const output = results[0];
+
+      //init 2d array of values
+      const values = [];
+
+      console.log(output);
+
+      //populate 2d array of values
+      for (let i = 0; i < output.length; i++) {
+
+        const row = [];
+
+        // get datetime as string so i can do string slicing and reformat the datetime
+        const datetime = `${output[i]['last_serviced']}`;
+
+        row.push(output[i]['golf_cart_id']);
+        row.push(datetime.slice(4, 15));
+        row.push(output[i]['employee_id']);
+        values.push(row);
+      }
+
+      // Send the results as JSON response
+      res.json(values);
+    } catch (err) {
+      console.error('Error selecting rows:', err.message);
+      return res.status(500).send('Failed to retrieve rows');
+    }
+  } catch (error) {
+    console.error('General error:', error);
+    res.status(500).send('Server error');
+  } finally {
+    // Release the connection back to the pool
+    if (connection) {
+      connection.release();
+      console.log('Connection released back to the pool.');
+    }
+  }
+});
+
+// READ endpoint for vendors page
+app.get('/api/getVendorsTable', async (req, res) => {
+  let connection;
+
+  try {
+    //establish connection
+    connection = await db.pool.getConnection();
+    console.log('Connection established.');
+
+    try {
+      const results = await connection.query('SELECT * FROM Vendors;');
+
+      //workable format
+      const output = results[0];
+
+      //init 2d array of values
+      const values = [];
+
+      console.log(output);
+
+      //populate 2d array of values
+      for (let i = 0; i < output.length; i++) {
+        const row = [];
+        row.push(output[i]['vendor_id']);
+        row.push(output[i]['vendor_name']);
+        row.push(output[i]['description']);
+        values.push(row);
+      }
+
+      // Send the results as JSON response
+      res.json(values);
+    } catch (err) {
+      console.error('Error selecting rows:', err.message);
+      return res.status(500).send('Failed to retrieve rows');
+    }
+  } catch (error) {
+    console.error('General error:', error);
+    res.status(500).send('Server error');
+  } finally {
+    // Release the connection back to the pool
+    if (connection) {
+      connection.release();
+      console.log('Connection released back to the pool.');
+    }
+  }
+});
+
+// READ endpoint for employees page
+app.get('/api/getEventsTable', async (req, res) => {
+  let connection;
+
+  try {
+    //establish connection
+    connection = await db.pool.getConnection();
+    console.log('Connection established.');
+
+    try {
+      const results = await connection.query('SELECT * FROM Events;');
+
+      //workable format
+      const output = results[0];
+
+      //init 2d array of values
+      const values = [];
+
+      console.log(output);
+
+      //populate 2d array of values
+      for (let i = 0; i < output.length; i++) {
+        const row = [];
+        row.push(output[i]['event_id']);
+        row.push(output[i]['employee_id']);
+        row.push(output[i]['event_name']);
+        row.push(output[i]['vendor_id']);
+
+        // reformat datetime
+        const datetime = `${output[i]['time_start']}`;
+        console.log(datetime);
+        row.push(datetime.slice(4, 15) + " " + datetime.slice(16, 21));
+        values.push(row);
+      }
+
+      // Send the results as JSON response
+      res.json(values);
+    } catch (err) {
+      console.error('Error selecting rows:', err.message);
+      return res.status(500).send('Failed to retrieve rows');
+    }
+  } catch (error) {
+    console.error('General error:', error);
+    res.status(500).send('Server error');
+  } finally {
+    // Release the connection back to the pool
+    if (connection) {
+      connection.release();
+      console.log('Connection released back to the pool.');
+    }
+  }
+});
+
+// READ endpoint for roles page
+app.get('/api/getRolesTable', async (req, res) => {
+  let connection;
+
+  try {
+    //establish connection
+    connection = await db.pool.getConnection();
+    console.log('Connection established.');
+
+    try {
+      const results = await connection.query('SELECT * FROM Roles;');
+
+      //workable format
+      const output = results[0];
+
+      //init 2d array of values
+      const values = [];
+
+      console.log(output);
+
+      //populate 2d array of values
+      for (let i = 0; i < output.length; i++) {
+        const row = [];
+        row.push(output[i]['role_id']);
+        row.push(output[i]['description']);
+        row.push(output[i]['employee_id']);
+        values.push(row);
+      }
+
+      // Send the results as JSON response
+      res.json(values);
+    } catch (err) {
+      console.error('Error selecting rows:', err.message);
+      return res.status(500).send('Failed to retrieve rows');
+    }
+  } catch (error) {
+    console.error('General error:', error);
+    res.status(500).send('Server error');
+  } finally {
+    // Release the connection back to the pool
+    if (connection) {
+      connection.release();
+      console.log('Connection released back to the pool.');
+    }
+  }
+});
+
+
 
 // Add your Connect DB Activitiy Code Below:
 // ...
