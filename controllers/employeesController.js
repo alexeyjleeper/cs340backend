@@ -12,20 +12,36 @@ const lodash = require("lodash");
 
 //read
 const getEmployees = async (req, res) => {
+
+    let connection;
+
     try {
-        // select all rows from employees table
-        const query = "SELECT * FROM Employees";
-        // send query to db
-        const [rows] = db.query(query);
-        // return rows to UI
-        res.json(rows);
+        connection = await db.pool.getConnection();
+    
+        try {
+            // select all rows from employees table
+            const query = "SELECT * FROM Employees";
+            // send query to db
+            const [rows] = connection.query(query);
+            // return rows to UI
+            res.json(rows);
 
+        } catch (error) {
+
+            console.error("Error fetching all employees from the database");
+
+            res.status(500).json({error: "Error fetching all employees from the database"});
+
+        }
     } catch (error) {
-
-        console.error("Error fetching all employees from the database");
-
-        res.status(500).json({error: "Error fetching all employees from the database"});
-
+        console.error('General error:', error);
+        res.status(500).send('Server error');
+    } finally {
+        // Release the connection back to the pool
+        if (connection) {
+          connection.release();
+          console.log('Connection released back to the pool.');
+        }
     }
 };
 

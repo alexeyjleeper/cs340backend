@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const db = require('./database/config.js');
 
 const app = express();
 const PORT = process.env.PORT || 8500;
@@ -10,11 +11,119 @@ const PORT = process.env.PORT || 8500;
 // If on FLIP, use cors() middleware to allow cross-origin requests from the frontend with your port number:
 // EX (local): http://localhost:5173 
 // EX (FLIP/classwork) http://flip3.engr.oregonstate.edu:5173
-app.use(cors({ credentials: true, origin: "*" }));
+app.use(cors());
 app.use(express.json());
 
 // API Routes for backend CRUD:
 app.use("/api/employees", require("./routes/employeesRoutes.js"));
+
+// define a new GET request with express:
+app.get('/api/diagnostic', async (req, res) => {
+    let connection;
+  
+    try {
+      // Get a connection from the pool
+      connection = await db.pool.getConnection();
+      console.log('Connection established.');
+  
+      // Drop the table if it exists
+      try {
+        await connection.query('DROP TABLE IF EXISTS diagnostic;');
+        console.log('Table dropped successfully.');
+      } catch (err) {
+        console.error('Error dropping the table:', err.message);
+        return res.status(500).send('Failed to drop table');
+      }
+  
+      // Create the table
+      try {
+        await connection.query('CREATE TABLE diagnostic (id INT AUTO_INCREMENT, text VARCHAR(255) NOT NULL, PRIMARY KEY (id));');
+        console.log('Table created successfully.');
+      } catch (err) {
+        console.error('Error creating the table:', err.message);
+        return res.status(500).send('Failed to create table');
+      }
+  
+      // Insert a new row
+      try {
+        await connection.query('INSERT INTO diagnostic (text) VALUES ("MySQL is working!");');
+        console.log('Row inserted successfully.');
+      } catch (err) {
+        console.error('Error inserting row:', err.message);
+        return res.status(500).send('Failed to insert row');
+      }
+  
+      // Select all rows from the table
+      try {
+        const results = await connection.query('SELECT * FROM diagnostic;');
+        console.log('Query results:', results);
+  
+        // Send the results as JSON response
+        res.json(results);
+      } catch (err) {
+        console.error('Error selecting rows:', err.message);
+        return res.status(500).send('Failed to retrieve rows');
+      }
+  
+    } catch (error) {
+      console.error('General error:', error);
+      res.status(500).send('Server error');
+    } finally {
+      // Release the connection back to the pool
+      if (connection) {
+        connection.release();
+        console.log('Connection released back to the pool.');
+      }
+    }
+  });
+
+app.get('/api/getEmployeesTable', async (req, res) => {
+  let connection;
+
+  try {
+    //establish connection
+    connection = await db.pool.getConnection();
+    console.log('Connection established.');
+
+    try {
+      const results = await connection.query('SELECT * FROM Employees;');
+
+      //workable format
+      const output = results[0];
+
+      //init 2d array of values
+      const values = [];
+
+      console.log(output);
+
+      //populate 2d array of values
+      for (let i = 0; i < output.length; i++) {
+        const row = [];
+        row.push(output[i]['employee_id']);
+        row.push(output[i]['name']);
+        row.push(output[i]['age']);
+        values.push(row);
+      }
+
+      console.log("got past calculations");
+
+      // Send the results as JSON response
+      res.json(values);
+    } catch (err) {
+      console.error('Error selecting rows:', err.message);
+      return res.status(500).send('Failed to retrieve rows');
+    }
+  } catch (error) {
+    console.error('General error:', error);
+    res.status(500).send('Server error');
+  } finally {
+    // Release the connection back to the pool
+    if (connection) {
+      connection.release();
+      console.log('Connection released back to the pool.');
+    }
+  }
+})
 
 
 // Add your Connect DB Activitiy Code Below:
@@ -61,6 +170,8 @@ app.get('/', function(req, res)
 
 // ...
 // End Connect DB Activity Code.
+
+
 
 
 const os = require("os");
