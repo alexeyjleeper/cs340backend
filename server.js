@@ -127,7 +127,7 @@ app.get('/api/getEmployeesTable', async (req, res) => {
 })
 
 //CREATE ENDPOINT
-app.post('/api/createEmployees', async (req, res) => {
+app.post('/api/createEmployee', async (req, res) => {
     let connection;
 
     try {
@@ -139,7 +139,7 @@ app.post('/api/createEmployees', async (req, res) => {
             // get all user inputs into variables
             const { name, age } = req.body;
             const query = "INSERT INTO Employees (name, age) VALUES (?, ?)";
-            response = db.connection(query, [name, age]);
+            response = connection.query(query, [name, age]);
             res.status(201).json(response);
 
         } catch (error) {
@@ -159,7 +159,133 @@ app.post('/api/createEmployees', async (req, res) => {
     }
 })
 
+// app.post('/api/createEvents', async (req, res) => {
+//     let connection;
 
+//     try {
+//         //establish connection
+//         connection = await db.pool.getConnection();
+//         console.log('Connection established.');
+
+//         try {
+//             // get all user inputs into variables
+//             const { name, age } = req.body;
+//             const query = "INSERT INTO Events (employee_id(FK), event_name, vendor_id(FK) time_start) VALUES (?, ?)";
+//             response = db.connection(query, [name, age]);
+//             res.status(201).json(response);
+
+//         } catch (error) {
+//             console.error("Error inserting events to the database");
+//             res.status(500).json({ error: "Error inserting events to the database" });
+//         }
+
+//     } catch (error) {
+//         console.error('General error:', error);
+//         res.status(500).send('Server error');
+//     } finally {
+//         // Release the connection back to the pool
+//         if (connection) {
+//             connection.release();
+//             console.log('Connection released back to the pool.');
+//         }
+//     }
+// })
+
+// app.post('/api/createVendors', async (req, res) => {
+//     let connection;
+
+//     try {
+//         //establish connection
+//         connection = await db.pool.getConnection();
+//         console.log('Connection established.');
+
+//         try {
+//             // get all user inputs into variables
+//             const { name, age } = req.body;
+//             const query = "INSERT INTO Vendors (name, age) VALUES (?, ?)";
+//             response = db.connection(query, [name, age]);
+//             res.status(201).json(response);
+
+//         } catch (error) {
+//             console.error("Error inserting vendors to the database");
+//             res.status(500).json({ error: "Error inserting Vendors to the database" });
+//         }
+
+//     } catch (error) {
+//         console.error('General error:', error);
+//         res.status(500).send('Server error');
+//     } finally {
+//         // Release the connection back to the pool
+//         if (connection) {
+//             connection.release();
+//             console.log('Connection released back to the pool.');
+//         }
+//     }
+// })
+
+// app.post('/api/createGolfCarts', async (req, res) => {
+//     let connection;
+
+//     try {
+//         //establish connection
+//         connection = await db.pool.getConnection();
+//         console.log('Connection established.');
+
+//         try {
+//             // get all user inputs into variables
+//             const { name, age } = req.body;
+//             const query = "INSERT INTO GolfCarts (name, age) VALUES (?, ?)";
+//             response = db.connection(query, [name, age]);
+//             res.status(201).json(response);
+
+//         } catch (error) {
+//             console.error("Error inserting GolfCarts to the database");
+//             res.status(500).json({ error: "Error inserting GolfCarts to the database" });
+//         }
+
+//     } catch (error) {
+//         console.error('General error:', error);
+//         res.status(500).send('Server error');
+//     } finally {
+//         // Release the connection back to the pool
+//         if (connection) {
+//             connection.release();
+//             console.log('Connection released back to the pool.');
+//         }
+//     }
+// })
+
+// app.post('/api/createRoles', async (req, res) => {
+//     let connection;
+
+//     try {
+//         //establish connection
+//         connection = await db.pool.getConnection();
+//         console.log('Connection established.');
+
+//         try {
+//             // get all user inputs into variables
+//             const { name, age } = req.body;
+//             const query = "INSERT INTO Roles (name, age) VALUES (?, ?)";
+//             response = db.connection(query, [name, age]);
+//             res.status(201).json(response);
+
+//         } catch (error) {
+//             console.error("Error inserting Roles to the database");
+//             res.status(500).json({ error: "Error inserting Roles to the database" });
+//         }
+
+//     } catch (error) {
+//         console.error('General error:', error);
+//         res.status(500).send('Server error');
+//     } finally {
+//         // Release the connection back to the pool
+//         if (connection) {
+//             connection.release();
+//             console.log('Connection released back to the pool.');
+//         }
+//     }
+// })
 
 // Add your Connect DB Activitiy Code Below:
 // ...
