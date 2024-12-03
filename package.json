@@ -1,5 +1,5 @@
 {
-  "name": "step4draft",
+  "name": "cs340backend",
   "version": "1.0.0",
   "description": "This is the backend express API that connects the frontend to the mariadb database",
   "main": "server.js",

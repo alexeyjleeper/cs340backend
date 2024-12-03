@@ -20,110 +20,145 @@ app.use("/api/employees", require("./routes/employeesRoutes.js"));
 // define a new GET request with express:
 app.get('/api/diagnostic', async (req, res) => {
     let connection;
-  
+
     try {
-      // Get a connection from the pool
-      connection = await db.pool.getConnection();
-      console.log('Connection established.');
-  
-      // Drop the table if it exists
-      try {
-        await connection.query('DROP TABLE IF EXISTS diagnostic;');
-        console.log('Table dropped successfully.');
-      } catch (err) {
-        console.error('Error dropping the table:', err.message);
-        return res.status(500).send('Failed to drop table');
-      }
-  
-      // Create the table
-      try {
-        await connection.query('CREATE TABLE diagnostic (id INT AUTO_INCREMENT, text VARCHAR(255) NOT NULL, PRIMARY KEY (id));');
-        console.log('Table created successfully.');
-      } catch (err) {
-        console.error('Error creating the table:', err.message);
-        return res.status(500).send('Failed to create table');
-      }
-  
-      // Insert a new row
-      try {
-        await connection.query('INSERT INTO diagnostic (text) VALUES ("MySQL is working!");');
-        console.log('Row inserted successfully.');
-      } catch (err) {
-        console.error('Error inserting row:', err.message);
-        return res.status(500).send('Failed to insert row');
-      }
-  
-      // Select all rows from the table
-      try {
-        const results = await connection.query('SELECT * FROM diagnostic;');
-        console.log('Query results:', results);
-  
-        // Send the results as JSON response
-        res.json(results);
-      } catch (err) {
-        console.error('Error selecting rows:', err.message);
-        return res.status(500).send('Failed to retrieve rows');
-      }
-  
+        // Get a connection from the pool
+        connection = await db.pool.getConnection();
+        console.log('Connection established.');
+
+        // Drop the table if it exists
+        try {
+            await connection.query('DROP TABLE IF EXISTS diagnostic;');
+            console.log('Table dropped successfully.');
+        } catch (err) {
+            console.error('Error dropping the table:', err.message);
+            return res.status(500).send('Failed to drop table');
+        }
+
+        // Create the table
+        try {
+            await connection.query('CREATE TABLE diagnostic (id INT AUTO_INCREMENT, text VARCHAR(255) NOT NULL, PRIMARY KEY (id));');
+            console.log('Table created successfully.');
+        } catch (err) {
+            console.error('Error creating the table:', err.message);
+            return res.status(500).send('Failed to create table');
+        }
+
+        // Insert a new row
+        try {
+            await connection.query('INSERT INTO diagnostic (text) VALUES ("MySQL is working!");');
+            console.log('Row inserted successfully.');
+        } catch (err) {
+            console.error('Error inserting row:', err.message);
+            return res.status(500).send('Failed to insert row');
+        }
+
+        // Select all rows from the table
+        try {
+            const results = await connection.query('SELECT * FROM diagnostic;');
+            console.log('Query results:', results);
+
+            // Send the results as JSON response
+            res.json(results);
+        } catch (err) {
+            console.error('Error selecting rows:', err.message);
+            return res.status(500).send('Failed to retrieve rows');
+        }
+
     } catch (error) {
-      console.error('General error:', error);
-      res.status(500).send('Server error');
+        console.error('General error:', error);
+        res.status(500).send('Server error');
     } finally {
-      // Release the connection back to the pool
-      if (connection) {
-        connection.release();
-        console.log('Connection released back to the pool.');
-      }
+        // Release the connection back to the pool
+        if (connection) {
+            connection.release();
+            console.log('Connection released back to the pool.');
+        }
     }
-  });
+});
 
+//SELECT ENDPOINT
 app.get('/api/getEmployeesTable', async (req, res) => {
-  let connection;
-
-  try {
-    //establish connection
-    connection = await db.pool.getConnection();
-    console.log('Connection established.');
+    let connection;
 
     try {
-      const results = await connection.query('SELECT * FROM Employees;');
+        //establish connection
+        connection = await db.pool.getConnection();
+        console.log('Connection established.');
 
-      //workable format
-      const output = results[0];
+        try {
+            const results = await connection.query('SELECT * FROM Employees;');
 
-      //init 2d array of values
-      const values = [];
+            //workable format
+            const output = results[0];
 
-      console.log(output);
+            //init 2d array of values
+            const values = [];
 
-      //populate 2d array of values
-      for (let i = 0; i < output.length; i++) {
-        const row = [];
-        row.push(output[i]['employee_id']);
-        row.push(output[i]['name']);
-        row.push(output[i]['age']);
-        values.push(row);
-      }
+            console.log(output);
 
-      console.log("got past calculations");
+            //populate 2d array of values
+            for (let i = 0; i < output.length; i++) {
+                const row = [];
+                row.push(output[i]['employee_id']);
+                row.push(output[i]['name']);
+                row.push(output[i]['age']);
+                values.push(row);
+            }
 
-      // Send the results as JSON response
-      res.json(values);
-    } catch (err) {
-      console.error('Error selecting rows:', err.message);
-      return res.status(500).send('Failed to retrieve rows');
+            console.log("got past calculations");
+
+            // Send the results as JSON response
+            res.json(values);
+        } catch (err) {
+            console.error('Error selecting rows:', err.message);
+            return res.status(500).send('Failed to retrieve rows');
+        }
+    } catch (error) {
+        console.error('General error:', error);
+        res.status(500).send('Server error');
+    } finally {
+        // Release the connection back to the pool
+        if (connection) {
+            connection.release();
+            console.log('Connection released back to the pool.');
+        }
     }
-  } catch (error) {
-    console.error('General error:', error);
-    res.status(500).send('Server error');
-  } finally {
-    // Release the connection back to the pool
-    if (connection) {
-      connection.release();
-      console.log('Connection released back to the pool.');
-    }
-  }
 })
+
+//CREATE ENDPOINT
+app.post('/api/createEmployees', async (req, res) => {
+    let connection;
+
+    try {
+        //establish connection
+        connection = await db.pool.getConnection();
+        console.log('Connection established.');
+
+        try {
+            // get all user inputs into variables
+            const { name, age } = req.body;
+            const query = "INSERT INTO Employees (name, age) VALUES (?, ?)";
+            response = db.connection(query, [name, age]);
+            res.status(201).json(response);
+
+        } catch (error) {
+            console.error("Error inserting employees to the database");
+            res.status(500).json({ error: "Error inserting employees to the database" });
+        }
+
+    } catch (error) {
+        console.error('General error:', error);
+        res.status(500).send('Server error');
+    } finally {
+        // Release the connection back to the pool
+        if (connection) {
+            connection.release();
+            console.log('Connection released back to the pool.');
+        }
+    }
+})
+
 
 
 // Add your Connect DB Activitiy Code Below:
@@ -178,6 +213,6 @@ const os = require("os");
 const hostname = os.hostname();
 
 app.listen(PORT, () => {
-  // flip server should automatically match whatever server you're on 
-  console.log(`Server running:  http://${hostname}:${PORT}...`);
+    // flip server should automatically match whatever server you're on 
+    console.log(`Server running:  http://${hostname}:${PORT}...`);
 });
