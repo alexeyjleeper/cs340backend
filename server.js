@@ -126,23 +126,6 @@ app.get('/api/getEmployeesTable', async (req, res) => {
   }
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //CREATE endpoint for Employees page
 /*-----------------------------------------------------
 // app.post('/api/makeEmployee', async (req, res) => {
@@ -185,7 +168,7 @@ app.post('/api/createEmployee', function(req, res){
   let data = req.body;
 
   // Create the query and run it on the database
-  query1 = `INSERT INTO Employees (name, age) VALUES ('${data['name']}', '${data['input-age']}', ${homeworld}, ${age})`;
+  query1 = `INSERT INTO Employees (name, age) VALUES ('${data['name']}', '${data['age']}')`;
   db.pool.query(query1, function(error, rows, fields){
 
       // Check to see if there was an error
@@ -196,8 +179,7 @@ app.post('/api/createEmployee', function(req, res){
           res.sendStatus(400);
       }
 
-      // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
-      // presents it on the screen
+      // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM and presents it on the screen
       else
       {
           res.redirect('/');
@@ -257,6 +239,31 @@ app.get('/api/getGolfCartsTable', async (req, res) => {
   }
 });
 
+//CREATE endpoint for golf carts page
+app.post('/api/createGolfCart', function(req, res){
+  // Capture the incoming data and parse it back to a JS object
+  let data = req.body;
+
+  // Create the query and run it on the database
+  query1 = `INSERT INTO GolfCarts (last_serviced, employee_id) VALUES ('${data['last_serviced']}', '${data['employee_id']}')`;
+  db.pool.query(query1, function(error, rows, fields){
+
+      // Check to see if there was an error
+      if (error) {
+
+          // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+          console.log(error)
+          res.sendStatus(400);
+      }
+
+      // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM and presents it on the screen
+      else
+      {
+          res.redirect('/');
+      }
+    })
+})
+
 // READ endpoint for vendors page
 app.get('/api/getVendorsTable', async (req, res) => {
   let connection;
@@ -304,7 +311,32 @@ app.get('/api/getVendorsTable', async (req, res) => {
   }
 });
 
-// READ endpoint for employees page
+//CREATE endpoint for vendorspage
+app.post('/api/createVendor', function(req, res){
+  // Capture the incoming data and parse it back to a JS object
+  let data = req.body;
+
+  // Create the query and run it on the database
+  query1 = `INSERT INTO Vendors (name, description) VALUES ('${data['name']}', '${data['description']}')`;
+  db.pool.query(query1, function(error, rows, fields){
+
+      // Check to see if there was an error
+      if (error) {
+
+          // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+          console.log(error)
+          res.sendStatus(400);
+      }
+
+      // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM and presents it on the screen
+      else
+      {
+          res.redirect('/');
+      }
+    })
+})
+
+// READ endpoint for events page
 app.get('/api/getEventsTable', async (req, res) => {
   let connection;
 
@@ -357,6 +389,31 @@ app.get('/api/getEventsTable', async (req, res) => {
   }
 });
 
+//CREATE endpoint for events page
+app.post('/api/createEvent', function(req, res){
+  // Capture the incoming data and parse it back to a JS object
+  let data = req.body;
+
+  // Create the query and run it on the database
+  query1 = `INSERT INTO Events (event_name, vendor_id, time_start) VALUES ('${data['event_name']}', '${data['vendor_id']}', '${data['time_start']}')`;
+  db.pool.query(query1, function(error, rows, fields){
+
+      // Check to see if there was an error
+      if (error) {
+
+          // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+          console.log(error)
+          res.sendStatus(400);
+      }
+
+      // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM and presents it on the screen
+      else
+      {
+          res.redirect('/');
+      }
+    })
+})
+
 // READ endpoint for roles page
 app.get('/api/getRolesTable', async (req, res) => {
   let connection;
@@ -404,6 +461,30 @@ app.get('/api/getRolesTable', async (req, res) => {
   }
 });
 
+//CREATE endpoint for roles page
+app.post('/api/createRole', function(req, res){
+  // Capture the incoming data and parse it back to a JS object
+  let data = req.body;
+
+  // Create the query and run it on the database
+  query1 = `INSERT INTO Roles (description, employee_id) VALUES ('${data['description']}', '${data['employee_id']}')`;
+  db.pool.query(query1, function(error, rows, fields){
+
+      // Check to see if there was an error
+      if (error) {
+
+          // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+          console.log(error)
+          res.sendStatus(400);
+      }
+
+      // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM and presents it on the screen
+      else
+      {
+          res.redirect('/');
+      }
+    })
+})
 
 
 // Add your Connect DB Activitiy Code Below:
