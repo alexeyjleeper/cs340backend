@@ -77,6 +77,7 @@ app.get('/api/diagnostic', async (req, res) => {
     }
   });
 
+//READ endpoint for Employees page
 app.get('/api/getEmployeesTable', async (req, res) => {
   let connection;
 
@@ -123,6 +124,85 @@ app.get('/api/getEmployeesTable', async (req, res) => {
       console.log('Connection released back to the pool.');
     }
   }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//CREATE endpoint for Employees page
+/*-----------------------------------------------------
+// app.post('/api/makeEmployee', async (req, res) => {
+//   let connection;
+
+//   try {
+//     //establish connection
+//     connection = await db.pool.getConnection();
+//     console.log('Connection established.');
+
+//     try {
+//       // get all user inputs into variables
+//       const {name, age} = req.body;
+//       const query = "INSERT INTO Employees (name, age) VALUES (?, ?)";
+//       const [response] = connection.query(query, [name, age]);
+//       res.status(201).json(response);
+
+//     } catch (error) {
+//         console.error("Error creating Employee");
+//         res.status(500).json({error: "Error creating Employee"});
+//     }
+
+//   } catch (error) {
+//     console.error('General error:', error);
+//     res.status(500).send('Server error');
+
+//   } finally {
+//     // Release the connection back to the pool
+//     if (connection) {
+//       connection.release();
+//       console.log('Connection released back to the pool.');
+//     }
+// })
+-----------------------------------------------------*/
+
+
+//CREATE endpoint for Employees page
+app.post('/api/createEmployee', function(req, res){
+  // Capture the incoming data and parse it back to a JS object
+  let data = req.body;
+
+  // Create the query and run it on the database
+  query1 = `INSERT INTO Employees (name, age) VALUES ('${data['name']}', '${data['input-age']}', ${homeworld}, ${age})`;
+  db.pool.query(query1, function(error, rows, fields){
+
+      // Check to see if there was an error
+      if (error) {
+
+          // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
+          console.log(error)
+          res.sendStatus(400);
+      }
+
+      // If there was no error, we redirect back to our root route, which automatically runs the SELECT * FROM bsg_people and
+      // presents it on the screen
+      else
+      {
+          res.redirect('/');
+      }
+    })
 })
 
 // READ endpoint for golf carts page
